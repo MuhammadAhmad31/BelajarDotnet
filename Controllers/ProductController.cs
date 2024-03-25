@@ -4,19 +4,28 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("[controller]")]
-public class ProductsController : ControllerBase
+public class ProductController : ControllerBase
 {
     private readonly AppDbContext _context;
 
-    public ProductsController(AppDbContext context)
+    public ProductController(AppDbContext context)
     {
         _context = context;
     }
 
     [HttpGet]
-    public IEnumerable<Product> Get()
+    public ActionResult<IEnumerable<Product>> Get()
     {
-        return _context.Products.ToList();
+        try
+        {
+            var products = _context.Products.ToList();
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error fetching products: {ex}");
+            return StatusCode(500, "Internal server error");
+        }
     }
 
     [HttpGet("{id}")]
