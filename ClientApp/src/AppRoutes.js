@@ -1,3 +1,4 @@
+import { AddProduct } from "./components/AddProduct";
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
@@ -19,6 +20,10 @@ const AppRoutes = [
   {
     path: '/fetch-products',
     element: <Product />
+  },
+  {
+    path: '/add-product',
+    element: <AddProduct />
   }
 ];
 

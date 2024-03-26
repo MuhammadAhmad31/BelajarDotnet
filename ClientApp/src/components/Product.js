@@ -44,6 +44,7 @@ export class Product extends Component {
             <div>
                 <h1 id="tableLabel">Products</h1>
                 <p>This component demonstrates fetching data from the server.</p>
+                <a href="/add-product">Tambahkan</a>
                 {contents}
             </div>
         );
