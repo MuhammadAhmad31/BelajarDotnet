@@ -20,6 +20,7 @@ export class Product extends Component {
                     <th>Product ID</th>
                     <th>Product Name</th>
                     <th>Price</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,10 @@ export class Product extends Component {
                         <td>{product.id}</td>
                         <td>{product.name}</td>
                         <td>{product.price}</td>
+                        <td>
+                            <a href={`/edit-product/${product.id}`}>Edit</a> |
+                            <a href={`/delete-product/${product.id}`}>Delete</a>
+                        </td>
                     </tr>
                 )}
                 </tbody>
