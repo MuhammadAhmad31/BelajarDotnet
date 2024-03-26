@@ -14,24 +14,30 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Product>> Get()
+    public ActionResult<ApiResponse<IEnumerable<Product>>> Get()
     {
         try
         {
             var products = _context.Products.ToList();
-            return Ok(products);
+            return Ok(ApiResponse.Success(products));
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error fetching products: {ex}");
-            return StatusCode(500, "Internal server error");
+            return StatusCode(500, ApiResponse.Error<IEnumerable<Product>>("Internal server error"));
         }
     }
 
     [HttpGet("{id}")]
-    public Product Get(int id)
+    public ActionResult<ApiResponse<Product>> Get(int id)
     {
-        return _context.Products.Find(id);
+        var product = _context.Products.Find(id);
+        if (product == null)
+        {
+            return NotFound(ApiResponse.Error<Product>("Product not found"));
+        }
+
+        return Ok(ApiResponse.Success(product));
     }
 
     [HttpPost]
@@ -39,7 +45,7 @@ public class ProductController : ControllerBase
     {
         _context.Products.Add(product);
         _context.SaveChanges();
-        return Ok(product);
+        return Ok(ApiResponse.Success(product));
     }
 
     [HttpPut("{id}")]
@@ -48,7 +54,7 @@ public class ProductController : ControllerBase
         var existingProduct = _context.Products.Find(id);
         if (existingProduct == null)
         {
-            return NotFound();
+            return NotFound(ApiResponse.Error<Product>("Product not found"));
         }
 
         existingProduct.Name = product.Name;
@@ -56,7 +62,7 @@ public class ProductController : ControllerBase
         existingProduct.Description = product.Description;
 
         _context.SaveChanges();
-        return Ok(existingProduct);
+        return Ok(ApiResponse.Success(existingProduct));
     }
 
     [HttpDelete("{id}")]
@@ -65,11 +71,11 @@ public class ProductController : ControllerBase
         var product = _context.Products.Find(id);
         if (product == null)
         {
-            return NotFound();
+            return NotFound(ApiResponse.Error<Product>("Product not found"));
         }
 
         _context.Products.Remove(product);
         _context.SaveChanges();
-        return Ok(product);
+        return Ok(ApiResponse.Success(product));
     }
 }

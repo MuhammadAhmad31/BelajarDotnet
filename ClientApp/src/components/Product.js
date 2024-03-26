@@ -59,7 +59,7 @@ export class Product extends Component {
             
             const data = await response.json();
             console.log(data);
-            this.setState({ products: data, loading: false });
+            this.setState({ products: data.data, loading: false });
         } catch (error) {
             console.error('Error fetching product data:', error);
             this.setState({ loading: false });
