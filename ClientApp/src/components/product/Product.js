@@ -12,7 +12,24 @@ export class Product extends Component {
         this.populateProductData();
     }
 
-    static renderProductsTable(products) {
+    handleDelete = async (id) => {
+        if (window.confirm("Apakah Anda yakin ingin menghapus entitas ini?")) {
+            this.setState({ loading: true });
+            try {
+                const response = await fetch(`product/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    this.setState({ loading: false });
+                    this.populateProductData(); // Mengambil data produk lagi setelah penghapusan berhasil
+                }
+            } catch (error) {
+                this.setState({ loading: false, error: error.message });
+            }
+        }
+    }
+
+    static renderProductsTable(products, handleDelete) {
         return (
             <table className="table table-striped" aria-labelledby="tableLabel">
                 <thead>
@@ -31,7 +48,7 @@ export class Product extends Component {
                         <td>{product.price}</td>
                         <td>
                             <a href={`/edit-product/${product.id}`}>Edit</a> |
-                            <a href={`/delete-product/${product.id}`}>Delete</a>
+                            <button onClick={() => handleDelete(product.id)}>Delete</button>
                         </td>
                     </tr>
                 )}
@@ -41,9 +58,11 @@ export class Product extends Component {
     }
 
     render() {
-        let contents = this.state.loading
+        const { products, loading } = this.state;
+
+        let contents = loading
             ? <p><em>Loading...</em></p>
-            : Product.renderProductsTable(this.state.products);
+            : Product.renderProductsTable(products, this.handleDelete);
 
         return (
             <div>
@@ -58,11 +77,9 @@ export class Product extends Component {
     async populateProductData() {
         try {
             const response = await fetch('product');
-            
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            
             const data = await response.json();
             console.log(data);
             this.setState({ products: data.data, loading: false });
@@ -71,5 +88,5 @@ export class Product extends Component {
             this.setState({ loading: false });
         }
     }
-    
 }
+
